@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.2.xsd">
+		
+
+	<!-- 配置注解扫描 -->
+	<context:component-scan base-package="org.cao"></context:component-scan>
+	
+	<!-- 创建数据源（数据连接池使用dbcp） -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" 
+			destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+		<property name="url" value="jdbc:mysql://127.0.0.1:3306/big_practice01?useUnicode=true&amp;charactorEncoding=utf8"/>
+		<property name="username" value="root"/>
+		<property name="password" value="root"/>
+		<!-- 连接池启动时的初始值 -->
+		<property name="initialSize" value="3"/>
+		<!-- 连接池的最大值 -->
+		<property name="maxActive" value="800"/>
+		<!-- 最大空闲值 -->
+		<property name="maxIdle" value="100"/>
+		<!-- 最小空闲值 -->
+		<property name="minIdle" value="3"/>
+		<!-- 是否启用超时自动移除空闲链接 -->
+		<property name="removeAbandoned" value="false"/>
+		<!-- 超时时间 -->
+		<property name="removeAbandonedTimeout" value="18000"/>
+		<!-- 超时等待时间 -->
+		<property name="maxWait" value="10000"></property>
+	</bean>
+	<!-- 创建SqlSession -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="typeAliasesPackage">
+			<value>org.cao.dto</value>
+		</property>
+		<property name="mapperLocations">
+			<value>classpath:org/cao/mapperdao/*.xml</value>
+		</property>
+	</bean>
+	<!-- 扫描mybatis操作数据库的接口 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" >
+		<property name="basePackage">
+			<value>org.cao.mapperdao</value>
+		</property>
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 配置事务管理器  -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+
+	<!-- 定义advice,配置传播特性、事务隔离级别、只读事务、回滚策略 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager" >
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+			<tx:method name="insert*" propagation="REQUIRED"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="update*" propagation="REQUIRED"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="*Add" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+			<tx:method name="del*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+			<tx:method name="back*" propagation="REQUIRED"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="*" propagation="REQUIRED" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+
+	<!-- 定义那些类使用事务 -->
+	<aop:config>
+	<!-- 第一个 * 是任意类型的返回值或者任意类型的访问修饰符 
+		   第二个*  任意的类
+		   第三个*  任意的方法
+		   第四个..  有参数 或者无参数
+	 -->
+		<aop:advisor pointcut="execution(* org.cao.service.*.*(..))"
+			advice-ref="txAdvice" />
+	</aop:config>
+
+	
+
+</beans>

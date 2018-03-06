@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cao.mapperdao.UserMapperdao">
+	<select id="findprovice" resultType="org.cao.dto.City">
+
+		select * from city where pid = #{id}
+	</select>
+	<select id="getCountName" resultType="int">
+		select count(1) from city where name = #{name}
+	</select>
+</mapper>
