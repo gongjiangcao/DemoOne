@@ -36,6 +36,9 @@ public class UserController {
 				
 		return userServie.getCountName(name);
 	}
-	
+	/********************************/
+	public void say(){
+		System.out.println("我修改了");
+	}
 	
 }
