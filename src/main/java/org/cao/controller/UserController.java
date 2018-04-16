@@ -40,5 +40,7 @@ public class UserController {
 	public void say(){
 		System.out.println("我修改了");
 	}
-	
+	public   void eat(){
+        System.out.println("我吃了");
+    }
 }
