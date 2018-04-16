@@ -47,4 +47,7 @@ public class UserController {
 //	public   void sleep(){
 //        System.out.println("我睡了");
 //    }
+	public void drink(){
+		System.out.println("我喝水l");
+	}
 }
