@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
 **1:@作者:曹子良
 **2:@时间:2018年1月13日上午9:28:49
-**3:@功能:只是一个三级联动   m没了
+**3:@功能:只是一个三级联动  m哈哈
 **/
 @Controller
 public class UserController {
@@ -41,10 +41,8 @@ public class UserController {
 		System.out.println("我修改了");
 	}
 
-	public   void eat(){
-        System.out.println("我吃了");
-    }
-	public   void sleep(){
-        System.out.println("我睡了");
-    }
+
+	public void drink(){
+		System.out.println("我喝水l");
+	}
 }
